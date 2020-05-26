@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Header, Icon, Segment } from 'semantic-ui-react'
+import { Button, Header, Icon, Popup, Segment } from 'semantic-ui-react'
 import '../App.css'
 
 const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisabledLocally, maxLedsPerQueue, maxTimePerLed, minTimePerLed }) => {
@@ -61,7 +61,7 @@ const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisable
       <div>You can construct LED sequences here. Click the LED icons to set their colors, then set on-time durations below (default is 0.5s per LED).</div><br />
       <div>Maximum amount of LEDs: {maxLedsPerQueue}, on-time duration interval: {minTimePerLed}s - {maxTimePerLed}s </div>
       <Segment>
-        <Icon id={ledIds[0]} color={ledColors[0]} onClick={ledIds[0] !== 'led-inactive' ? () => handleLedClick(0) : () => void(0)} size='big' name={ledIcons[0]} />
+        <Popup position='bottom left' content='Click on the LED symbols to change the color, then set their on-time duration below' trigger={<Icon id={ledIds[0]} color={ledColors[0]} onClick={ledIds[0] !== 'led-inactive' ? () => handleLedClick(0) : () => void(0)} size='big' name={ledIcons[0]} />} />
         <Icon id={ledIds[1]} color={ledColors[1]} onClick={ledIds[1] !== 'led-inactive' ? () => handleLedClick(1) : () => void(0)} size='big' name={ledIcons[1]} />
         <Icon id={ledIds[2]} color={ledColors[2]} onClick={ledIds[2] !== 'led-inactive' ? () => handleLedClick(2) : () => void(0)} size='big' name={ledIcons[2]} />
         <Icon id={ledIds[3]} color={ledColors[3]} onClick={ledIds[3] !== 'led-inactive' ? () => handleLedClick(3) : () => void(0)} size='big' name={ledIcons[3]} />
@@ -84,7 +84,7 @@ const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisable
         <input onChange={(e) => handleTimeChange(e, 8)} disabled={ledColors[8] === 'black' ? true : false} name='led8' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
         <input onChange={(e) => handleTimeChange(e, 9)} disabled={ledColors[9] === 'black' ? true : false} name='led9' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
       </Segment>
-      <Button disabled={queueBuilderDisabled.fromServer || queueBuilderDisabled.locally} onClick={() => handleSendQueue(ledColors, ledTimes)}>Send Sequence to Server</Button>
+      <Button color='brown' disabled={queueBuilderDisabled.fromServer || queueBuilderDisabled.locally} onClick={() => handleSendQueue(ledColors, ledTimes)}>Send Sequence to Server</Button>
     </Segment>
   )
 }

@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import { Container, Divider, Grid, Header, Icon, Message, Popup } from 'semantic-ui-react'
+import { Button, Container, Divider, Grid, Header, Icon, Image, Message, Modal, Popup } from 'semantic-ui-react'
 import { createRandomUsername } from './util/randomUser'
 import LedButton from './components/LedButtons'
 import WebStream from './components/WebStream'
 import QueueList from './components/QueueList'
 import QueueBuilder from './components/QueueBuilder'
+import ProjectInfo from './components/ProjectInfo'
 
 function App({ websocket }) {
-  /* Webcam stream from test.html:
-  <canvas id="video-canvas"></canvas>
-	<script type="text/javascript" src="jsmpeg.min.js"></script>
-	<script type="text/javascript">
-		var canvas = document.getElementById('video-canvas');
-		var url = 'ws://'+document.location.hostname+':8082/';
-		var player = new JSMpeg.Player(url, {canvas: canvas});
-	</script>
-  */
   const [redButtonDisabled, setRedButtonDisabled] = useState(false)
   const [blueButtonDisabled, setBlueButtonDisabled] = useState(false)
   const [greenButtonDisabled, setGreenButtonDisabled] = useState(false)
@@ -132,10 +124,11 @@ function App({ websocket }) {
         setBlueButtonDisabled(false)
         break
       case 'all':
+        console.log('enablng all buttons', jsonMsg)
         setRedButtonDisabled(false)
         setGreenButtonDisabled(false)
         setBlueButtonDisabled(false)
-        setQueueTimer(jsonMsg.timeOut/1000)
+        setQueueTimer(Number(jsonMsg).timeOut/1000)
         setRunningItem([])
         break
       default:
@@ -219,17 +212,14 @@ function App({ websocket }) {
             <WebStream connectedUsers={connectedClients} uptime={uptime} clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }} queues='7'  />
           </Grid.Column>
           <Grid.Column width={3}>
-            <LedButton buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }} buttonTimeout={buttonTimeout} buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }} ledButtonClick={ledButtonClick} />
+            <LedButton buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }} clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }} buttonTimeout={buttonTimeout} buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }} ledButtonClick={ledButtonClick} />
           </Grid.Column>
           <Grid.Column width={2}>
-            <Message info>
-              <Popup position='left center' content='Information about this project' trigger={<Icon onClick={() => alert('blaa')} id='info-logo' name='info circle' size='huge' />} />
-              <Container style={{ margin: '0.5em' }}>What is this? How was it done? And why??</Container>
-            </Message>
-            <Message info>
-              <Popup position='left center' content='Developer&apos;s homepage: www.markotyrvainen.fi' trigger={<Icon id='info-logo' onClick={() => window.open('http://www.markotyrvainen.fi')} name='user circle outline' size='huge' />} />
+            <ProjectInfo />
+            <Popup position='top center' content='Visit developer&apos;s homepage: www.markotyrvainen.fi' trigger={<Message info>
+              <Icon id='info-logo' onClick={() => window.open('http://www.markotyrvainen.fi')} name='user circle outline' size='huge' />
               <Container style={{ margin: '0.5em' }}>Who made this?</Container>
-            </Message>
+            </Message>} />
           </Grid.Column>
         </Grid.Row>
 
@@ -245,6 +235,8 @@ function App({ websocket }) {
           <Grid.Column width={2}></Grid.Column>
         </Grid.Row>
       </Grid>
+
+
     </Container>
   )
 }
