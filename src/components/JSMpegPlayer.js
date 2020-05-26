@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import JSMpeg from '@cycjimmy/jsmpeg-player'
 
 export default class JsmpegPlayer extends Component {
