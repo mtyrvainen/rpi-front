@@ -56,3 +56,8 @@
      opacity: 1;
   }
 }
+
+#videoWrapper {
+  width: 640px;
+  height: 360px;
+}
