@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import { Button, Container, Divider, Grid, Header, Icon, Image, List, Menu, Message, Popup, Sidebar, Segment } from 'semantic-ui-react'
-/*import {
-  BrowserView,
-  MobileView,
-  isBrowser,
-  isMobile
-} from "react-device-detect";*/
+import { Container, Divider, Grid, Header, Icon, Message, Popup } from 'semantic-ui-react'
 import { createRandomUsername } from './util/randomUser'
 import LedButton from './components/LedButtons'
 import WebStream from './components/WebStream'
@@ -26,9 +20,9 @@ function App({ websocket }) {
   const [redButtonDisabled, setRedButtonDisabled] = useState(false)
   const [blueButtonDisabled, setBlueButtonDisabled] = useState(false)
   const [greenButtonDisabled, setGreenButtonDisabled] = useState(false)
-  const [queueBuilderDisabled, setQueueBuilderDisabled] = useState(false)
+  const [queueBuilderDisabledfromServer, setQueueBuilderDisabledfromServer] = useState(false)
+  const [queueBuilderDisabledLocally, setQueueBuilderDisabledLocally] = useState(true)
   const [queue, setQueue] = useState([])
-  const [visible, setVisible] = useState(false)
   const [username, setUsername] = useState('')
   const [maxQueueLength, setMaxQueueLength] = useState('')
   const [maxTimePerLed, setMaxTimePerLed] = useState('')
@@ -43,6 +37,7 @@ function App({ websocket }) {
   const [redClickAmount, setRedClickAmount] = useState(0)
   const [blueClickAmount, setBlueClickAmount] = useState(0)
   const [greenClickAmount, setGreenClickAmount] = useState(0)
+  //TODO: implement logging
   const [logMessage, setLogMessage] = useState(['Client initializing...'])
   const [connectedClients, setConnectedClients] = useState(1)
   const [uptime, setUptime] = useState('...')
@@ -87,15 +82,16 @@ function App({ websocket }) {
       setQueue(jsonMsg.queue)
       setMaxQueueLength(jsonMsg.queueConstraints.maxQueueLength)
       setMaxLedsPerQueue(jsonMsg.queueConstraints.maxLedsPerQueue)
-      setMaxTimePerLed(jsonMsg.queueConstraints.maxTimePerLed)
-      setMinTimePerLed(jsonMsg.queueConstraints.minTimePerLed)
+      setMaxTimePerLed(jsonMsg.queueConstraints.maxTimePerLed/1000)
+      setMinTimePerLed(jsonMsg.queueConstraints.minTimePerLed/1000)
       setRunningItemText('Waiting for next sequence...')
-      setQueueBuilderDisabled(jsonMsg.queueBuilderDisabled)
+      setQueueBuilderDisabledfromServer(jsonMsg.queueBuilderDisabled)
       setRedClickAmount(jsonMsg.clickAmounts.redClicks)
       setGreenClickAmount(jsonMsg.clickAmounts.greenClicks)
       setBlueClickAmount(jsonMsg.clickAmounts.blueClicks)
       setUptime(jsonMsg.serverUptime)
       setButtonTimeOut(jsonMsg.buttonTimeout)
+      setLogMessage('Client ready!')
     } else if (jsonMsg.type === 'disableButton') {
       console.log('disabling button', jsonMsg.color)
       switch (jsonMsg.color) {
@@ -154,9 +150,9 @@ function App({ websocket }) {
       queue.shift()
       setQueue([ ...queue ])
     } else if (jsonMsg.type === 'disableQueueBuilder') {
-      setQueueBuilderDisabled(true)
+      setQueueBuilderDisabledfromServer(true)
     } else if (jsonMsg.type === 'enableQueueBuilder') {
-      setQueueBuilderDisabled(false)
+      setQueueBuilderDisabledfromServer(false)
     } else if (jsonMsg.type === 'singleClickAmounts') {
       console.log('singleClickAmt', jsonMsg)
       setRedClickAmount(jsonMsg.clickData.redClicks)
@@ -194,13 +190,14 @@ function App({ websocket }) {
 
     ledColors.forEach( (color, i) => {
       if (color === 'red' || color === 'green' || color === 'blue') {
-        msg.colors.push(ledColors[i])
+        msg.colors.push(ledColors[i].slice(0, 1))
         msg.times.push(Number(ledTimes[i]))
       }
     })
 
     console.log('msg', msg)
-    websocket.send(`{ "type": "ledQueue", "colors": ["b", "g", "r", "b", "g", "r", "r"], "times": [0.1, 0.5, 0.3, 0.3, 0.2, 0.1, 0.1], "user": "${username}" }`)
+    websocket.send(JSON.stringify(msg))
+    //websocket.send(`{ "type": "ledQueue", "colors": ["b", "g", "r", "b", "g", "r", "r"], "times": [0.1, 0.5, 0.3, 0.3, 0.2, 0.1, 0.1], "user": "${username}" }`)
   }
 
   return (
@@ -243,7 +240,7 @@ function App({ websocket }) {
             <QueueList queue={queue} runningItem={runningItem} runningItemText={runningItemText} maxQueueLength={maxQueueLength} queueTimer={queueTimer} />
           </Grid.Column>
           <Grid.Column width={8}>
-            <QueueBuilder queueClick={queueClick} queueBuilderDisabled={queueBuilderDisabled} maxLedsPerQueue={maxLedsPerQueue} maxTimePerLed={maxTimePerLed} minTimePerLed={minTimePerLed} />
+            <QueueBuilder queueClick={queueClick} queueBuilderDisabled={{ fromServer: queueBuilderDisabledfromServer, locally: queueBuilderDisabledLocally }} setQueueBuilderDisabledLocally={setQueueBuilderDisabledLocally} maxLedsPerQueue={maxLedsPerQueue} maxTimePerLed={maxTimePerLed} minTimePerLed={minTimePerLed} />
           </Grid.Column>
           <Grid.Column width={2}></Grid.Column>
         </Grid.Row>

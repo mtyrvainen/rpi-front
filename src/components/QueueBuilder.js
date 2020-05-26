@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import { Button, Header, Icon, Segment } from 'semantic-ui-react'
 import '../App.css'
 
-const QueueBuilder = ({ queueClick, queueBuilderDisabled, maxLedsPerQueue, maxTimePerLed, minTimePerLed }) => {
+const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisabledLocally, maxLedsPerQueue, maxTimePerLed, minTimePerLed }) => {
 
-  const [ledIds, setLedIds] = useState(['led-not-set', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive', 'led-inactive'])
-  const [ledIcons, setLedIcons] = useState(['circle', 'circle outline', 'circle outline', 'circle outline', 'circle outline', 'circle outline', 'circle outline', 'circle outline', 'circle outline', 'circle outline'])
-  const [ledColors, setLedColors] = useState(['black', 'black', 'black', 'black', 'black', 'black', 'black', 'black', 'black', 'black'])
-  const [ledTimes, setLedTimes] = useState([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
+  const [ledIds, setLedIds] = useState(['led-not-set', ...Array(9).fill('led-inactive')])
+  const [ledIcons, setLedIcons] = useState(['circle', ...Array(9).fill('circle outline') ])
+  const [ledColors, setLedColors] = useState(Array(10).fill('black'))
+  const [ledTimes, setLedTimes] = useState(Array(10).fill(0.5))
 
   const handleLedClick = (index) => {
     if (ledIds[index] === 'led-not-set') {
@@ -22,7 +22,7 @@ const QueueBuilder = ({ queueClick, queueBuilderDisabled, maxLedsPerQueue, maxTi
           ledColors[index + 1] = 'black'
         }
       }
-
+      setQueueBuilderDisabledLocally(false)
       setLedIds([ ...ledIds ])
       setLedIcons([ ...ledIcons ])
       setLedColors([ ...ledColors ])
@@ -41,17 +41,25 @@ const QueueBuilder = ({ queueClick, queueBuilderDisabled, maxLedsPerQueue, maxTi
   }
 
   const handleTimeChange = (e, index) => {
-    console.log('changed value @ index', index, 'value:', e.target.value)
     ledTimes[index] = e.target.value
     setLedTimes([ ...ledTimes ])
   }
 
+  const handleSendQueue = (ledColors, ledTimes) => {
+    queueClick(ledColors, ledTimes)
+
+    setLedIds(['led-not-set', ...Array(9).fill('led-inactive')])
+    setLedIcons(['circle', ...Array(9).fill('circle outline') ])
+    setLedColors(Array(10).fill('black'))
+    setLedTimes(Array(10).fill(0.5))
+    setQueueBuilderDisabledLocally(true)
+  }
+
   return(
     <Segment>
-      <Header as="h4" textAlign="center">Sequence Builder</Header>
-      <div>Build a queue item here</div>
-      <div>Max Leds: {maxLedsPerQueue}, time per LED {minTimePerLed/1000}s - {maxTimePerLed/1000}s </div>
-      <Button disabled={queueBuilderDisabled} onClick={() => queueClick(ledColors, ledTimes)}>Create and send a new Queue Item</Button>
+      <Header as="h3" textAlign="center">Sequence Builder</Header>
+      <div>You can construct LED sequences here. Click the LED icons to set their colors, then set on-time durations below (default is 0.5s per LED).</div><br />
+      <div>Maximum amount of LEDs: {maxLedsPerQueue}, on-time duration interval: {minTimePerLed}s - {maxTimePerLed}s </div>
       <Segment>
         <Icon id={ledIds[0]} color={ledColors[0]} onClick={ledIds[0] !== 'led-inactive' ? () => handleLedClick(0) : () => void(0)} size='big' name={ledIcons[0]} />
         <Icon id={ledIds[1]} color={ledColors[1]} onClick={ledIds[1] !== 'led-inactive' ? () => handleLedClick(1) : () => void(0)} size='big' name={ledIcons[1]} />
@@ -65,17 +73,18 @@ const QueueBuilder = ({ queueClick, queueBuilderDisabled, maxLedsPerQueue, maxTi
         <Icon id={ledIds[9]} color={ledColors[9]} onClick={ledIds[9] !== 'led-inactive' ? () => handleLedClick(9) : () => void(0)} size='big' name={ledIcons[9]} />
       </Segment>
       <Segment>
-        <input onChange={(e) => handleTimeChange(e, 0)} disabled={ledColors[0] === 'black' ? true : false} name='led0' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 1)} disabled={ledColors[1] === 'black' ? true : false} name='led1' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 2)} disabled={ledColors[2] === 'black' ? true : false} name='led2' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 3)} disabled={ledColors[3] === 'black' ? true : false} name='led3' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 4)} disabled={ledColors[4] === 'black' ? true : false} name='led4' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 5)} disabled={ledColors[5] === 'black' ? true : false} name='led5' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 6)} disabled={ledColors[6] === 'black' ? true : false} name='led6' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 7)} disabled={ledColors[7] === 'black' ? true : false} name='led7' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 8)} disabled={ledColors[8] === 'black' ? true : false} name='led8' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
-        <input onChange={(e) => handleTimeChange(e, 9)} disabled={ledColors[9] === 'black' ? true : false} name='led9' type='number' min='0.1' max='5' placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 0)} disabled={ledColors[0] === 'black' ? true : false} name='led0' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 1)} disabled={ledColors[1] === 'black' ? true : false} name='led1' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 2)} disabled={ledColors[2] === 'black' ? true : false} name='led2' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 3)} disabled={ledColors[3] === 'black' ? true : false} name='led3' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 4)} disabled={ledColors[4] === 'black' ? true : false} name='led4' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 5)} disabled={ledColors[5] === 'black' ? true : false} name='led5' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 6)} disabled={ledColors[6] === 'black' ? true : false} name='led6' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 7)} disabled={ledColors[7] === 'black' ? true : false} name='led7' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 8)} disabled={ledColors[8] === 'black' ? true : false} name='led8' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
+        <input onChange={(e) => handleTimeChange(e, 9)} disabled={ledColors[9] === 'black' ? true : false} name='led9' type='number' min={minTimePerLed} max={maxTimePerLed} placeholder='0.5' size='2' step='0.1' style={{ width: '3em' }} />
       </Segment>
+      <Button disabled={queueBuilderDisabled.fromServer || queueBuilderDisabled.locally} onClick={() => handleSendQueue(ledColors, ledTimes)}>Send Sequence to Server</Button>
     </Segment>
   )
 }
