@@ -57,8 +57,52 @@
   }
 }
 
-.video-wrapper {
-  width: 450px;
-  height: 300px;
-  background: aliceblue;
+@media only screen and (min-width: 1200px) {
+  .video-wrapper {
+    width: 450px;
+    height: 300px;
+    background: aliceblue;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .video-wrapper {
+    width: 100%;
+    height: 40vh;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .video-wrapper {
+    width: 100%;
+    height: 30vh;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .video-wrapper {
+    width: 100%;
+    height: 40vh;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .video-wrapper {
+    width: 100%;
+    height: 60vh;
+  }
+}
+
+@media only screen and (max-width: 690px) {
+  .video-wrapper {
+    width: 100%;
+    height: 50vh;
+  }
+}
+
+@media only screen and (max-width: 520px) {
+  .video-wrapper {
+    width: 100%;
+    height: 40vh;
+  }
 }
