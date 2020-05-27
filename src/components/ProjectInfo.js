@@ -1,6 +1,6 @@
 /* eslint-disable no-trailing-spaces */
 import React, { useState } from 'react'
-import { Button, Container, Header, Icon, Image, List, Message, Modal, Popup, Segment } from 'semantic-ui-react'
+import { Button, Container, Header, Icon, Image, List, Message, Modal, Popup } from 'semantic-ui-react'
 
 const ProjectInfo = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -27,7 +27,7 @@ const ProjectInfo = () => {
               <p>From your browser you can control the three Raspberry Pi controlled LEDs, which you can see in the camera stream. 
                 With the three buttons you can turn the LEDs on/off, and with the Sequence Builder you can submit a sequence of LED flashes of varying durations to the server&apos;s queue. 
                 These sequence items are processed from the queue with pre-defined intervals (probably around one minute, depends on the server settings). </p>
-              <p>The different controls will be disabled and enabled depending on what the server is doing. During sequence execution the three buttons are disabled (don&apos;t mess with the queue!) and if the queue is full, you can't submit more items to it.</p>
+              <p>The different controls will be disabled and enabled depending on what the server is doing. During sequence execution the three buttons are disabled (don&apos;t mess with the queue!) and if the queue is full, you can&apos;t submit more items to it.</p>
 
               <Header as='h3'>Project Infromation --&gt; How?</Header>
               <List>

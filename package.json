@@ -38,5 +38,6 @@
   },
   "devDependencies": {
     "eslint": "^6.6.0"
-  }
+  },
+  "homepage": "http://tyrvainen.hopto.org:3001/build"
 }

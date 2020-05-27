@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import { Button, Container, Divider, Grid, Header, Icon, Image, Message, Modal, Popup } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Icon, Message, Popup } from 'semantic-ui-react'
 import { createRandomUsername } from './util/randomUser'
 import LedButton from './components/LedButtons'
 import WebStream from './components/WebStream'
