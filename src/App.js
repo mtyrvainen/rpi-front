@@ -128,7 +128,7 @@ function App({ websocket }) {
         setRedButtonDisabled(false)
         setGreenButtonDisabled(false)
         setBlueButtonDisabled(false)
-        setQueueTimer(Number(jsonMsg).timeOut/1000)
+        setQueueTimer(jsonMsg.timeOut/1000)
         setRunningItem([])
         break
       default:
