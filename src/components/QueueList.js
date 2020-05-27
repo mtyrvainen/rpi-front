@@ -13,7 +13,7 @@ const QueueList = ({ queue, runningItem, maxQueueLength, queueTimer }) => {
           <List.Item color='green'>
             <List.Icon name='lightbulb' color={runningItem.length !== 0 ? 'yellow' : 'grey'} size='large' id={runningItem.length !== 0 ? 'pulsing-icon' : ''} verticalAlign='middle' />
             <List.Content>
-              <List.Header>{runningItem.length !== 0 ? runningItem.colors.toString() : 'Next execution in ...' }</List.Header>
+              <List.Header>{runningItem.length !== 0 ? runningItem.colors.toString() : 'Next execution in appx.' }</List.Header>
               <List.Description>{runningItem.length !== 0 ? `by ${runningItem.user}` : `${queueTimer} s`}</List.Description>
             </List.Content>
           </List.Item>

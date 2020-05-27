@@ -11,10 +11,10 @@ const ProjectInfo = () => {
     <Popup position='top center' content='Information about this project' trigger={
       <Message info>
         <Modal closeOnEscape={true}
-              closeOnRootNodeClick={true}
-              open={modalOpen}
-              onClose={handleClose}
-              trigger={<Icon id='info-logo' onClick={handleOpen} name='info circle' size='huge' />} >
+          closeOnRootNodeClick={true}
+          open={modalOpen}
+          onClose={handleClose}
+          trigger={<Icon id='info-logo' onClick={handleOpen} name='info circle' size='huge' />} >
           <Modal.Header>Information about the RPi LED Server project</Modal.Header>
           <Modal.Content image>
             <Image wrapped size='small' src='nodejs-new-pantone-black.svg' />
@@ -22,14 +22,14 @@ const ProjectInfo = () => {
             <Image wrapped size='medium' src='python-logo.png' />
             <Image wrapped size='tiny' src='RPi-Logo-Reg-SCREEN.webp' />
             <Modal.Description>
-              <Header>Project Information --> What?</Header>
+              <Header>Project Information --&gt; What?</Header>
               <p>This project is mainly just a personal one. Mostly meaningless as it is, but is does utilize many different techniques which can be harnessed in very useful ways.</p>
               <p>From your browser you can control the three Raspberry Pi controlled LEDs, which you can see in the camera stream. 
-                With the three buttons you can turn the LEDs on/off, and with the Sequence Builder you can submit a sequence of LED flashes of varying durations to the server's queue. 
+                With the three buttons you can turn the LEDs on/off, and with the Sequence Builder you can submit a sequence of LED flashes of varying durations to the server&apos;s queue. 
                 These sequence items are processed from the queue with pre-defined intervals (probably around one minute, depends on the server settings). </p>
-              <p>The different controls will be disabled and enabled depending on what the server is doing. During sequence execution the three buttons are disabled (don't mess with the queue!) and if the queue is full, you can't submit more items to it.</p>
+              <p>The different controls will be disabled and enabled depending on what the server is doing. During sequence execution the three buttons are disabled (don&apos;t mess with the queue!) and if the queue is full, you can't submit more items to it.</p>
 
-              <Header as='h3'>Project Infromation --> How?</Header>
+              <Header as='h3'>Project Infromation --&gt; How?</Header>
               <List>
                 <List.Item>
                   
@@ -69,8 +69,8 @@ const ProjectInfo = () => {
                 </List.Item>
               </List>
 
-              <Header>Project Information --> Why?</Header>
-              <p>The project's main goals were:    </p>
+              <Header>Project Information --&gt; Why?</Header>
+              <p>The project&apos;s main goals were:    </p>
               <List>
                 <List.Item>1. Get hands-on know-how of Node.js and React</List.Item>
                 <List.Item>2. Learn about Websockets and real-time web techniques</List.Item>
@@ -78,9 +78,9 @@ const ProjectInfo = () => {
                 <List.Item>-  and  -</List.Item>
                 <List.Item>4. Make use of my Raspberry Pi</List.Item>
               </List>
-              
+
               <Message>
-                If you want to examine the project more, visit the related <a target='_blank' href='https://github.com/mtyrvainen/rpi-server'>GitHub repos</a>.
+                If you want to examine the project more, visit the related <a rel='noopener noreferrer' target='_blank' href='https://github.com/mtyrvainen/rpi-server'>GitHub repos</a>.
               </Message>
               <Message>
                 More about me: <a href='http://www.markotyrvainen.fi'>www.markotyrvainen.fi</a>
