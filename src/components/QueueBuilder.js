@@ -3,7 +3,7 @@ import { Button, Header, Icon, Popup, Segment } from 'semantic-ui-react'
 import '../App.css'
 
 const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisabledLocally, maxLedsPerQueue, maxTimePerLed, minTimePerLed }) => {
-
+  //TODO: Make queue length related items dynamic: array sizes, components etc. dynamically created
   const [ledIds, setLedIds] = useState(['led-not-set', ...Array(9).fill('led-inactive')])
   const [ledIcons, setLedIcons] = useState(['circle', ...Array(9).fill('circle outline') ])
   const [ledColors, setLedColors] = useState(Array(10).fill('black'))

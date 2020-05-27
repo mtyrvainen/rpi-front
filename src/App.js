@@ -190,7 +190,6 @@ function App({ websocket }) {
 
     console.log('msg', msg)
     websocket.send(JSON.stringify(msg))
-    //websocket.send(`{ "type": "ledQueue", "colors": ["b", "g", "r", "b", "g", "r", "r"], "times": [0.1, 0.5, 0.3, 0.3, 0.2, 0.1, 0.1], "user": "${username}" }`)
   }
 
   return (
@@ -209,17 +208,39 @@ function App({ websocket }) {
 
         <Grid.Row stretched>
           <Grid.Column width={7}>
-            <WebStream connectedUsers={connectedClients} uptime={uptime} clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }} queues='7'  />
+            <WebStream
+              connectedUsers={connectedClients}
+              uptime={uptime}
+              clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
+              queues='7'
+            />
           </Grid.Column>
           <Grid.Column width={3}>
-            <LedButton buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }} clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }} buttonTimeout={buttonTimeout} buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }} ledButtonClick={ledButtonClick} />
+            <LedButton
+              buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }}
+              clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
+              buttonTimeout={buttonTimeout}
+              buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }}
+              ledButtonClick={ledButtonClick}
+            />
           </Grid.Column>
           <Grid.Column width={2}>
             <ProjectInfo />
-            <Popup position='top center' content='Visit developer&apos;s homepage: www.markotyrvainen.fi' trigger={<Message info>
-              <Icon id='info-logo' onClick={() => window.open('http://www.markotyrvainen.fi')} name='user circle outline' size='huge' />
-              <Container style={{ margin: '0.5em' }}>Who made this?</Container>
-            </Message>} />
+            <Popup
+              position='top center'
+              content='Visit developer&apos;s homepage: www.markotyrvainen.fi'
+              trigger={
+                <Message info>
+                  <Icon id='info-logo'
+                    onClick={() => window.open('http://www.markotyrvainen.fi')}
+                    name='user circle outline'
+                    size='huge'
+                  />
+                  <Container style={{ margin: '0.5em' }}>
+                    Who made this?
+                  </Container>
+                </Message>}
+            />
           </Grid.Column>
         </Grid.Row>
 
@@ -227,16 +248,27 @@ function App({ websocket }) {
           <Grid.Column width={2}>
           </Grid.Column>
           <Grid.Column width={4}>
-            <QueueList queue={queue} runningItem={runningItem} runningItemText={runningItemText} maxQueueLength={maxQueueLength} queueTimer={queueTimer} />
+            <QueueList
+              queue={queue}
+              runningItem={runningItem}
+              runningItemText={runningItemText}
+              maxQueueLength={maxQueueLength}
+              queueTimer={queueTimer}
+            />
           </Grid.Column>
           <Grid.Column width={8}>
-            <QueueBuilder queueClick={queueClick} queueBuilderDisabled={{ fromServer: queueBuilderDisabledfromServer, locally: queueBuilderDisabledLocally }} setQueueBuilderDisabledLocally={setQueueBuilderDisabledLocally} maxLedsPerQueue={maxLedsPerQueue} maxTimePerLed={maxTimePerLed} minTimePerLed={minTimePerLed} />
+            <QueueBuilder
+              queueClick={queueClick}
+              queueBuilderDisabled={{ fromServer: queueBuilderDisabledfromServer, locally: queueBuilderDisabledLocally }}
+              setQueueBuilderDisabledLocally={setQueueBuilderDisabledLocally}
+              maxLedsPerQueue={maxLedsPerQueue}
+              maxTimePerLed={maxTimePerLed}
+              minTimePerLed={minTimePerLed}
+            />
           </Grid.Column>
           <Grid.Column width={2}></Grid.Column>
         </Grid.Row>
       </Grid>
-
-
     </Container>
   )
 }
