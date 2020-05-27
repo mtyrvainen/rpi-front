@@ -124,11 +124,11 @@ function App({ websocket }) {
         setBlueButtonDisabled(false)
         break
       case 'all':
-        console.log('enablng all buttons', jsonMsg)
+        console.log('enabling all buttons', jsonMsg)
         setRedButtonDisabled(false)
         setGreenButtonDisabled(false)
         setBlueButtonDisabled(false)
-        setQueueTimer(Number(jsonMsg).timeOut/1000)
+        setQueueTimer(jsonMsg.timeBetweenExecutions/1000)
         setRunningItem([])
         break
       default:
