@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Container, Message } from 'semantic-ui-react'
 
-const LedButton = ({ buttonsDisabled, buttonTimers, buttonTimeout, ledButtonClick, clicks }) => {
+const LedButtons = ({ buttonsDisabled, buttonTimers, buttonTimeout, handleLedButtonClick, clicks }) => {
   return (
     <>
       <Button
@@ -9,7 +9,7 @@ const LedButton = ({ buttonsDisabled, buttonTimers, buttonTimeout, ledButtonClic
         size='large'
         color='red'
         disabled={buttonsDisabled.red}
-        onClick={() => ledButtonClick('r')}
+        onClick={() => handleLedButtonClick('r')}
         label={{ basic: true, color: 'red', pointing: 'left', content: clicks.red }}
         content={!buttonsDisabled.red ? 'Red LED' : buttonTimers.red}
       />
@@ -19,7 +19,7 @@ const LedButton = ({ buttonsDisabled, buttonTimers, buttonTimeout, ledButtonClic
         size='large'
         color='green'
         disabled={buttonsDisabled.green}
-        onClick={() => ledButtonClick('g')}
+        onClick={() => handleLedButtonClick('g')}
         label={{ basic: true, color: 'green', pointing: 'left', content: clicks.green }}
         content={!buttonsDisabled.green ? 'Green LED' : buttonTimers.green}
       />
@@ -29,7 +29,7 @@ const LedButton = ({ buttonsDisabled, buttonTimers, buttonTimeout, ledButtonClic
         size='large'
         color='blue'
         disabled={buttonsDisabled.blue}
-        onClick={() => ledButtonClick('b')}
+        onClick={() => handleLedButtonClick('b')}
         label={{ basic: true, color: 'blue', pointing: 'left', content: clicks.blue }}
         content={!buttonsDisabled.blue ? 'Blue LED' : buttonTimers.blue}
       />
@@ -43,5 +43,5 @@ const LedButton = ({ buttonsDisabled, buttonTimers, buttonTimeout, ledButtonClic
   )
 }
 
-export default LedButton
+export default LedButtons
 

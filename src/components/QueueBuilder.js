@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Header, Icon, Popup, Segment } from 'semantic-ui-react'
 import '../App.css'
 
-const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisabledLocally, maxLedsPerQueue, maxTimePerLed, minTimePerLed }) => {
+const QueueBuilder = ({ handleQueueClick, queueBuilderDisabled, setQueueBuilderDisabledLocally, maxLedsPerQueue, maxTimePerLed, minTimePerLed }) => {
   const [ledIds, setLedIds] = useState(['led-not-set', ...Array(maxLedsPerQueue - 1).fill('led-inactive')])
   const [ledIcons, setLedIcons] = useState(['circle', ...Array(maxLedsPerQueue - 1).fill('circle outline') ])
   const [ledColors, setLedColors] = useState(Array(maxLedsPerQueue).fill('black'))
@@ -52,7 +52,7 @@ const QueueBuilder = ({ queueClick, queueBuilderDisabled, setQueueBuilderDisable
   }
 
   const handleSendQueue = (ledColors, ledTimes) => {
-    queueClick(ledColors, ledTimes)
+    handleQueueClick(ledColors, ledTimes)
 
     setLedIds(['led-not-set', ...Array(maxLedsPerQueue - 1).fill('led-inactive')])
     setLedIcons(['circle', ...Array(maxLedsPerQueue - 1).fill('circle outline') ])
