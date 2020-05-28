@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import { Container, Divider, Grid, Header, Icon, Message, Popup } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Message } from 'semantic-ui-react'
 import { createRandomUsername } from './util/randomUser'
-import LedButton from './components/LedButtons'
+import LedButtons from './components/LedButtons'
 import WebStream from './components/WebStream'
 import QueueList from './components/QueueList'
 import QueueBuilder from './components/QueueBuilder'
 import ProjectInfo from './components/ProjectInfo'
+import DeveloperInfo from './components/DeveloperInfo'
+import LostConnectionModal from './components/LostConnectionModal'
 
 function App({ websocket }) {
   const [redButtonDisabled, setRedButtonDisabled] = useState(false)
@@ -34,12 +36,22 @@ function App({ websocket }) {
   const [connectedClients, setConnectedClients] = useState(1)
   const [uptime, setUptime] = useState('...')
   const [buttonTimeout, setButtonTimeOut] = useState('')
+  const [connectionModalOpen, setConnectionModalOpen] = useState(false)
 
   websocket.onopen = (e) => {
     console.log('[onopen] Connection established')
     console.log('e:', e)
     setUsername(createRandomUsername())
-    websocket.send('{ "welcome": "Client has joined the meeting!" }')
+  }
+
+  websocket.onclose = (e) => {
+    console.log('websocket connection terminated', e)
+    setRedButtonDisabled(true)
+    setGreenButtonDisabled(true)
+    setBlueButtonDisabled(true)
+    setQueueBuilderDisabledfromServer(true)
+    setLogMessage('Connection lost. Please refresh the window.')
+    setConnectionModalOpen(true)
   }
 
   useEffect(() => {
@@ -62,83 +74,99 @@ function App({ websocket }) {
     return () => clearInterval(timer)
   }, [queueTimer])
 
+
+  const handleInitialData = (msg) => {
+    console.log('received: initial data', msg)
+    //TODO: Parse Initial Values
+    //TODO: receive runningItem info from server
+    setRedButtonDisabled(!msg.redButton)
+    setGreenButtonDisabled(!msg.greenButton)
+    setBlueButtonDisabled(!msg.blueButton)
+    setQueueBuilderDisabledfromServer(msg.queueBuilderDisabled)
+
+    setMaxQueueLength(msg.queueConstraints.maxQueueLength)
+    setMaxLedsPerQueue(msg.queueConstraints.maxLedsPerQueue)
+    setMaxTimePerLed(msg.queueConstraints.maxTimePerLed/1000)
+    setMinTimePerLed(msg.queueConstraints.minTimePerLed/1000)
+
+    setQueue(msg.queue)
+    setRedClickAmount(msg.clickAmounts.redClicks)
+    setGreenClickAmount(msg.clickAmounts.greenClicks)
+    setBlueClickAmount(msg.clickAmounts.blueClicks)
+    setUptime(msg.serverUptime)
+    setButtonTimeOut(msg.buttonTimeout)
+
+    setRunningItemText('Waiting for next sequence...')
+    setLogMessage('Client ready!')
+  }
+
+  const handleButtonDisable = (msg) => {
+    console.log('received: disable button', msg.color)
+    switch (msg.color) {
+    case 'r':
+      setRedButtonDisabled(true)
+      setRedTimer(msg.timeOut/1000)
+      break
+    case 'g':
+      setGreenButtonDisabled(true)
+      setGreenTimer(msg.timeOut/1000)
+      break
+    case 'b':
+      setBlueButtonDisabled(true)
+      setBlueTimer(msg.timeOut/1000)
+      break
+    case 'all':
+      setRedButtonDisabled(true)
+      setGreenButtonDisabled(true)
+      setBlueButtonDisabled(true)
+      setRedTimer('Exeuting sequence')
+      setGreenTimer('Exeuting sequence')
+      setBlueTimer('Exeuting sequence')
+      break
+    default:
+      console.log('Error: not proper color')
+      break
+    }
+  }
+
+  const handleEnableButton = (msg) => {
+    console.log('received: enable button', msg.color)
+    switch (msg.color) {
+    case 'r':
+      setRedButtonDisabled(false)
+      break
+    case 'g':
+      setGreenButtonDisabled(false)
+      break
+    case 'b':
+      setBlueButtonDisabled(false)
+      break
+    case 'all':
+      setRedButtonDisabled(false)
+      setGreenButtonDisabled(false)
+      setBlueButtonDisabled(false)
+      setQueueTimer(msg.timeBetweenExecutions/1000)
+      setRunningItem([])
+      break
+    default:
+      console.log('Error: not proper color')
+      break
+    }
+  }
+
   const handleIncomingMsg = (jsonMsg) => {
     //TODO: ALL JSON MSG PARSING
     if (jsonMsg.type === 'clientInitialData') {
-      console.log('Received initial data', jsonMsg)
-      //TODO: Parse Initial Values
-      //TODO: receive runningItem info from server
-      setRedButtonDisabled(!jsonMsg.redButton)
-      setGreenButtonDisabled(!jsonMsg.greenButton)
-      setBlueButtonDisabled(!jsonMsg.blueButton)
-      setQueue(jsonMsg.queue)
-      setMaxQueueLength(jsonMsg.queueConstraints.maxQueueLength)
-      setMaxLedsPerQueue(jsonMsg.queueConstraints.maxLedsPerQueue)
-      setMaxTimePerLed(jsonMsg.queueConstraints.maxTimePerLed/1000)
-      setMinTimePerLed(jsonMsg.queueConstraints.minTimePerLed/1000)
-      setRunningItemText('Waiting for next sequence...')
-      setQueueBuilderDisabledfromServer(jsonMsg.queueBuilderDisabled)
-      setRedClickAmount(jsonMsg.clickAmounts.redClicks)
-      setGreenClickAmount(jsonMsg.clickAmounts.greenClicks)
-      setBlueClickAmount(jsonMsg.clickAmounts.blueClicks)
-      setUptime(jsonMsg.serverUptime)
-      setButtonTimeOut(jsonMsg.buttonTimeout)
-      setLogMessage('Client ready!')
+      handleInitialData(jsonMsg)
     } else if (jsonMsg.type === 'disableButton') {
-      console.log('disabling button', jsonMsg.color)
-      switch (jsonMsg.color) {
-      case 'r':
-        setRedButtonDisabled(true)
-        setRedTimer(jsonMsg.timeOut/1000)
-        break
-      case 'g':
-        setGreenButtonDisabled(true)
-        setGreenTimer(jsonMsg.timeOut/1000)
-        break
-      case 'b':
-        setBlueButtonDisabled(true)
-        setBlueTimer(jsonMsg.timeOut/1000)
-        break
-      case 'all':
-        setRedButtonDisabled(true)
-        setGreenButtonDisabled(true)
-        setBlueButtonDisabled(true)
-        setRedTimer('Exeuting sequence')
-        setGreenTimer('Exeuting sequence')
-        setBlueTimer('Exeuting sequence')
-        break
-      default:
-        console.log('Error: not proper color')
-        break
-      }
+      handleButtonDisable(jsonMsg)
     } else if (jsonMsg.type === 'enableButton') {
-      console.log('enabling button', jsonMsg.color)
-      switch (jsonMsg.color) {
-      case 'r':
-        setRedButtonDisabled(false)
-        break
-      case 'g':
-        setGreenButtonDisabled(false)
-        break
-      case 'b':
-        setBlueButtonDisabled(false)
-        break
-      case 'all':
-        console.log('enabling all buttons', jsonMsg)
-        setRedButtonDisabled(false)
-        setGreenButtonDisabled(false)
-        setBlueButtonDisabled(false)
-        setQueueTimer(jsonMsg.timeBetweenExecutions/1000)
-        setRunningItem([])
-        break
-      default:
-        console.log('Error: not proper color')
-        break
-      }
+      handleEnableButton(jsonMsg)
     } else if (jsonMsg.type === 'newQueueItem') {
+      console.log('received: new queue item', jsonMsg.queueItem)
       setQueue([ ...queue, jsonMsg.queueItem ])
     } else if (jsonMsg.type === 'processNextInQueue'){
-      console.log('processNextInQueue', jsonMsg.queueItem)
+      console.log('received: processNextInQueue', jsonMsg.queueItem)
       setRunningItem([ jsonMsg.queueItem ])
       queue.shift()
       setQueue([ ...queue ])
@@ -147,14 +175,13 @@ function App({ websocket }) {
     } else if (jsonMsg.type === 'enableQueueBuilder') {
       setQueueBuilderDisabledfromServer(false)
     } else if (jsonMsg.type === 'singleClickAmounts') {
-      console.log('singleClickAmt', jsonMsg)
       setRedClickAmount(jsonMsg.clickData.redClicks)
       setGreenClickAmount(jsonMsg.clickData.greenClicks)
       setBlueClickAmount(jsonMsg.clickData.blueClicks)
     } else if (jsonMsg.type === 'connectedClientsAmount') {
       setConnectedClients(jsonMsg.connectedClients)
     } else {
-      console.log('Not yet handled:', jsonMsg.type)
+      console.log('ERROR: Unhandled msg type:', jsonMsg.type)
     }
   }
 
@@ -167,13 +194,13 @@ function App({ websocket }) {
     handleIncomingMsg(jsonMsg)
   }
 
-  const ledButtonClick = (colorChar) => {
-    console.log(`Clicked: ${colorChar}`)
+  const handleLedButtonClick = (colorChar) => {
+    console.log(`Sending: clicked ${colorChar}`)
     websocket.send(`{ "type": "ledSingleClick", "color": "${colorChar}", "user": "${username}" }`)
   }
 
-  const queueClick = (ledColors, ledTimes) => {
-    console.log('ledcolors', ledColors, 'ledtimes', ledTimes)
+  const handleQueueClick = (ledColors, ledTimes) => {
+    console.log('Sending: ledcolors', ledColors, 'ledtimes', ledTimes)
     const msg = {
       type: 'ledQueue',
       colors: [],
@@ -216,31 +243,17 @@ function App({ websocket }) {
             />
           </Grid.Column>
           <Grid.Column width={3}>
-            <LedButton
+            <LedButtons
               buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }}
               clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
               buttonTimeout={buttonTimeout}
               buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }}
-              ledButtonClick={ledButtonClick}
+              handleLedButtonClick={handleLedButtonClick}
             />
           </Grid.Column>
           <Grid.Column width={2}>
             <ProjectInfo />
-            <Popup
-              position='top center'
-              content='Visit developer&apos;s homepage: www.markotyrvainen.fi'
-              trigger={
-                <Message info>
-                  <Icon id='info-logo'
-                    onClick={() => window.open('http://www.markotyrvainen.fi')}
-                    name='user circle outline'
-                    size='huge'
-                  />
-                  <Container style={{ margin: '0.5em' }}>
-                    Who made this?
-                  </Container>
-                </Message>}
-            />
+            <DeveloperInfo />
           </Grid.Column>
         </Grid.Row>
 
@@ -258,10 +271,10 @@ function App({ websocket }) {
           </Grid.Column>
           <Grid.Column width={8}>
             <QueueBuilder
-              queueClick={queueClick}
+              handleQueueClick={handleQueueClick}
               queueBuilderDisabled={{ fromServer: queueBuilderDisabledfromServer, locally: queueBuilderDisabledLocally }}
               setQueueBuilderDisabledLocally={setQueueBuilderDisabledLocally}
-              maxLedsPerQueue={maxLedsPerQueue}
+              maxLedsPerQueue={maxLedsPerQueue !== '' ? maxLedsPerQueue : 1}
               maxTimePerLed={maxTimePerLed}
               minTimePerLed={minTimePerLed}
             />
@@ -269,6 +282,8 @@ function App({ websocket }) {
           <Grid.Column width={2}></Grid.Column>
         </Grid.Row>
       </Grid>
+
+      <LostConnectionModal connectionModalOpen={connectionModalOpen} />
     </Container>
   )
 }
