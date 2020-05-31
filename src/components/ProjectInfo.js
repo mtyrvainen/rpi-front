@@ -98,7 +98,7 @@ const ProjectInfo = () => {
             </Message>
             <Message>
                 More about
-                me: <a href='http://www.markotyrvainen.fi'>www.markotyrvainen.fi</a>
+                me: <a href='http://markotyrvainen.fi'>markotyrvainen.fi</a>
             </Message>
           </Modal.Description>
         </Modal.Content>
