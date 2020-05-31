@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, createRef } from 'react'
 import './App.css'
-import { Container, Divider, Grid, Header, Message } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Message, Ref } from 'semantic-ui-react'
 import { createRandomUsername } from './util/randomUser'
 import LedButtons from './components/LedButtons'
 import WebStream from './components/WebStream'
@@ -40,7 +40,7 @@ function App({ websocket }) {
 
   websocket.onopen = (e) => {
     console.log('[onopen] Connection established')
-    console.log('e:', e)
+    //console.log(e)
     setUsername(createRandomUsername())
   }
 
@@ -189,7 +189,6 @@ function App({ websocket }) {
     //TODO: try catch for proper JSON
     const jsonMsg = JSON.parse(event.data)
     console.log(`[message] Data received from server: ${event.data}`)
-    console.log('json', jsonMsg)
     //TODO: check that key 'type' exists
     handleIncomingMsg(jsonMsg)
   }
@@ -219,69 +218,74 @@ function App({ websocket }) {
     websocket.send(JSON.stringify(msg))
   }
 
+  const contextRef = createRef()
+
   return (
     <Container>
-      <Grid stackable centered columns={4}>
-        <Grid.Row centered columns={1}>
-          <Grid.Column></Grid.Column>
-        </Grid.Row>
-        <Grid.Row centered columns={1}>
-          <Header as="h2" textAlign="center">
+      <Ref innerRef={contextRef}>
+        <Grid stackable centered columns={4}>
+          <Grid.Row centered columns={1}>
+            <Grid.Column></Grid.Column>
+          </Grid.Row>
+          <Grid.Row centered columns={1}>
+            <Header as="h2" textAlign="center">
           RPi LED Server - {username}
-          </Header>
-          <Divider />
-          <Grid.Column width={6}><Message id='code-font'>{logMessage}</Message></Grid.Column>
-        </Grid.Row>
+            </Header>
+            <Divider />
+            <Grid.Column width={6}><Message id='code-font'>{logMessage}</Message></Grid.Column>
+          </Grid.Row>
 
-        <Grid.Row stretched>
-          <Grid.Column width={7}>
-            <WebStream
-              connectedUsers={connectedClients}
-              uptime={uptime}
-              clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
-              queues='7'
-            />
-          </Grid.Column>
-          <Grid.Column width={3}>
-            <LedButtons
-              buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }}
-              clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
-              buttonTimeout={buttonTimeout}
-              buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }}
-              handleLedButtonClick={handleLedButtonClick}
-            />
-          </Grid.Column>
-          <Grid.Column width={2}>
-            <ProjectInfo />
-            <DeveloperInfo />
-          </Grid.Column>
-        </Grid.Row>
+          <Grid.Row stretched>
+            <Grid.Column width={7}>
+              <WebStream
+                connectedUsers={connectedClients}
+                uptime={uptime}
+                clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
+                queues='7'
+                contextRef={contextRef}
+              />
+            </Grid.Column>
+            <Grid.Column width={3}>
+              <LedButtons
+                buttonsDisabled={{ red: redButtonDisabled, green: greenButtonDisabled, blue: blueButtonDisabled }}
+                clicks={{ red: redClickAmount, green: greenClickAmount, blue: blueClickAmount }}
+                buttonTimeout={buttonTimeout}
+                buttonTimers={{ red: redTimer, green: greenTimer, blue: blueTimer }}
+                handleLedButtonClick={handleLedButtonClick}
+              />
+            </Grid.Column>
+            <Grid.Column width={2}>
+              <ProjectInfo />
+              <DeveloperInfo />
+            </Grid.Column>
+          </Grid.Row>
 
-        <Grid.Row columns={4}>
-          <Grid.Column width={2}>
-          </Grid.Column>
-          <Grid.Column width={4}>
-            <QueueList
-              queue={queue}
-              runningItem={runningItem}
-              runningItemText={runningItemText}
-              maxQueueLength={maxQueueLength}
-              queueTimer={queueTimer}
-            />
-          </Grid.Column>
-          <Grid.Column width={8}>
-            <QueueBuilder
-              handleQueueClick={handleQueueClick}
-              queueBuilderDisabled={{ fromServer: queueBuilderDisabledfromServer, locally: queueBuilderDisabledLocally }}
-              setQueueBuilderDisabledLocally={setQueueBuilderDisabledLocally}
-              maxLedsPerQueue={maxLedsPerQueue !== '' ? maxLedsPerQueue : 1}
-              maxTimePerLed={maxTimePerLed}
-              minTimePerLed={minTimePerLed}
-            />
-          </Grid.Column>
-          <Grid.Column width={2}></Grid.Column>
-        </Grid.Row>
-      </Grid>
+          <Grid.Row columns={4}>
+            <Grid.Column width={2}>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <QueueList
+                queue={queue}
+                runningItem={runningItem}
+                runningItemText={runningItemText}
+                maxQueueLength={maxQueueLength}
+                queueTimer={queueTimer}
+              />
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <QueueBuilder
+                handleQueueClick={handleQueueClick}
+                queueBuilderDisabled={{ fromServer: queueBuilderDisabledfromServer, locally: queueBuilderDisabledLocally }}
+                setQueueBuilderDisabledLocally={setQueueBuilderDisabledLocally}
+                maxLedsPerQueue={maxLedsPerQueue !== '' ? maxLedsPerQueue : 1}
+                maxTimePerLed={maxTimePerLed}
+                minTimePerLed={minTimePerLed}
+              />
+            </Grid.Column>
+            <Grid.Column width={2}></Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Ref>
 
       <LostConnectionModal connectionModalOpen={connectionModalOpen} />
     </Container>

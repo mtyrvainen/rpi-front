@@ -1,12 +1,14 @@
 import React from 'react'
-import { Icon, Label, Message, Popup, Segment } from 'semantic-ui-react'
+import { Icon, Label, Message, Popup, Segment, Sticky } from 'semantic-ui-react'
 import JSMpegPlayer from './JSMpegPlayer'
 import '../App.css'
 
-const WebStream = ({ connectedUsers, uptime, clicks }) => {
+const WebStream = ({ connectedUsers, uptime, clicks, contextRef }) => {
   return(
     <Segment>
-      <JSMpegPlayer wrapperClassName='video-wrapper' videoUrl={'ws://tyrvainen.hopto.org:8082'} />
+      <Sticky context={contextRef}>
+        <JSMpegPlayer wrapperClassName='video-wrapper' videoUrl={'ws://tyrvainen.hopto.org:8082'} />
+      </Sticky>
       <Message>
         <Popup
           position='bottom center'
