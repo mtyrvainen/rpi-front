@@ -10,7 +10,7 @@
     "react": "^16.13.1",
     "react-device-detect": "^1.12.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "react-scripts": "5.0.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2"
   },
@@ -37,7 +37,7 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^6.6.0"
+    "eslint": "^9.32.0"
   },
   "homepage": "http://tyrvainen.hopto.org:3001/build"
 }
